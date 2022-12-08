@@ -1,16 +1,14 @@
 import pdb
 import time
-import pickle
 
 time_start=time.time()
+
+
 
 map = [-1]
 mapLoc = []
 fixList = []
-
-PROCEDURE_STORAGE = []
 DEEP = 0
-MAX_DEEP = 0
 
 # unproccessMap = [-1,    [-1, 14, 7, 3, 6],
 #                         [-1, 10, 1, 15, 11],
@@ -67,8 +65,6 @@ def map_init(x, y, oriMap):
             mapLoc[oriMap[i][j]] = [i, j]
         map.append(temp)
 
-    PROCEDURE_STORAGE.append(map)
-
 def edge_judgement(xi, yi, xf, yf, x, y):
     if(xi <= x <= xf and yi <= y <= yf):
         return True
@@ -103,7 +99,6 @@ def swap(curPoint1, curPoint2):
     map[x2][y2].x, map[x2][y2].y = x1, y1
     map[x1][y1], map[x2][y2] = map[x2][y2], map[x1][y1]
     mapLoc[curPoint1.num], mapLoc[curPoint2.num] = mapLoc[curPoint2.num], mapLoc[curPoint1.num]
-    PROCEDURE_STORAGE.append(pickle.loads(pickle.dumps(map)))
     # print_test()
     a = 0
 
@@ -144,8 +139,7 @@ def movement_2p(xi, yi, xf, yf, curPoint1, curPoint2, xtarPoint, ytarPoint):
     return 0
 
 def movement(xi, yi, xf, yf, curPoint, xtarPoint, ytarPoint):
-    global DEEP, MAX_DEEP
-    MAX_DEEP = max(MAX_DEEP, DEEP)
+    global DEEP 
     # print("------------------------------------------------ Recursion depth: ", DEEP)
     if(DEEP > 10):
         a = 0
@@ -378,24 +372,6 @@ def print_test():
             # print(map[i][j].num, (map[i][j].x, map[i][j].y), end=' ')
             print(map[i][j].num, end=' ')
         print()
-
-def print_map(p_map):
-
-    print()
-    for i in range(1, x_max + 1):
-        for j in range(1, y_max + 1):
-            # print(map[i][j].num, (map[i][j].x, map[i][j].y), end=' ')
-            print(p_map[i][j].num, end=' ')
-        print()
-
-def write_res(f, w_map):
-    
-    f.write("\n")
-    for i in range(1, x_max + 1):
-        for j in range(1, y_max + 1):
-            # print(map[i][j].num, (map[i][j].x, map[i][j].y), end=' ')
-            f.write("{} ".format(w_map[i][j].num))
-        f.write("\n")
     
     
 
@@ -404,38 +380,16 @@ def main():
     x_max, y_max = len(unproccessMap) - 1, len(unproccessMap[1]) - 1
     map_init(x_max, y_max, unproccessMap)
     res = map_solve(x_max, y_max)
+    
+    print(res)
     print()
-    print("--------------------Result---------------------")
     print_test()
-    print("-----------------------------------------------")
-    print("Status (0->Success, -1->No Solution): ", res)
-    print("Total Steps: ", len(PROCEDURE_STORAGE))
-    print("Deepest recursion depth: ", MAX_DEEP)
+
+    
     time_end=time.time()
     print('time cost',time_end-time_start,'s')
-    print()
 
-    input("Press ENTER to show and write the procedure of the solution in a file where the upper level of this source code is  ")
-
-    for w_map in PROCEDURE_STORAGE:
-        print_map(w_map)
-
-    input("\nPress ENTER to write in file... (Note: The program may not create the file if no Administrator Permissions) ")
-    f = open(".\\result.txt", 'w')
-    for w_map in PROCEDURE_STORAGE:
-        write_res(f, w_map)
-    print("", file=f)
-    print("--------------------Result---------------------", file=f)
-    write_res(f, map)
-    print("-----------------------------------------------", file=f)
-    print("Status (0->Success, -1->No Solution): ", res, file=f)
-    print("Total Steps: ", len(PROCEDURE_STORAGE), file=f)
-    print("Deepest recursion depth: ", MAX_DEEP, file=f)
-    f.close()
-
-    input("\nPress ENTER to continue...  ")
-
-
+    input("PAUSE")
 
 if __name__ == "__main__":
     main()
