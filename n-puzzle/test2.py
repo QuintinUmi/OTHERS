@@ -1,4 +1,10 @@
 import pdb
+import time
+
+time_start=time.time()
+
+
+
 map = [-1]
 mapLoc = []
 fixList = []
@@ -22,7 +28,7 @@ DEEP = 0
 #                         [-1, 25, 14, 34, 28, 29, 16],
 #                         [-1, 2, 32, 9, 35, 11, 0]]
 
-unproccessMap = [-1,    [-1, 20, 63, 12, 4, 11, 6, 52, 32],       # RecursionError: maximum recursion depth exceeded
+unproccessMap = [-1,    [-1, 20, 63, 12, 4, 11, 6, 52, 32],      
                         [-1, 9, 38, 13, 3, 56, 62, 49, 16],
                         [-1, 15, 18, 23, 44, 26, 36, 19, 31],
                         [-1, 29, 17, 27, 28, 25, 30, 43, 51],
@@ -93,7 +99,7 @@ def swap(curPoint1, curPoint2):
     map[x2][y2].x, map[x2][y2].y = x1, y1
     map[x1][y1], map[x2][y2] = map[x2][y2], map[x1][y1]
     mapLoc[curPoint1.num], mapLoc[curPoint2.num] = mapLoc[curPoint2.num], mapLoc[curPoint1.num]
-    print_test()
+    # print_test()
     a = 0
 
 def movement_2p(xi, yi, xf, yf, curPoint1, curPoint2, xtarPoint, ytarPoint):
@@ -134,7 +140,7 @@ def movement_2p(xi, yi, xf, yf, curPoint1, curPoint2, xtarPoint, ytarPoint):
 
 def movement(xi, yi, xf, yf, curPoint, xtarPoint, ytarPoint):
     global DEEP 
-    print("------------------------------------------------ Recursion depth: ", DEEP)
+    # print("------------------------------------------------ Recursion depth: ", DEEP)
     if(DEEP > 10):
         a = 0
     # print_test()
@@ -379,6 +385,11 @@ def main():
     print()
     print_test()
 
+    
+    time_end=time.time()
+    print('time cost',time_end-time_start,'s')
+
+    input("PAUSE")
 
 if __name__ == "__main__":
     main()
