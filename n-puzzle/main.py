@@ -3,10 +3,16 @@ map = [-1]
 mapLoc = []
 fixList = []
 
-unproccessMap = [-1,    [-1, 14, 7, 3, 6],
-                        [-1, 10, 1, 15, 11],
-                        [-1, 12, 4, 2, 5],
-                        [-1, 8, 9, 13, 0]]
+# unproccessMap = [-1,    [-1, 14, 7, 3, 6],
+#                         [-1, 10, 1, 15, 11],
+#                         [-1, 12, 4, 2, 5],
+#                         [-1, 8, 9, 13, 0]]
+
+unproccessMap = [-1,    [-1, 20, 18, 3, 10, 19],
+                        [-1, 24, 1, 14, 5, 23],
+                        [-1, 2, 9, 13, 21, 6],
+                        [-1, 22, 11, 7, 12, 8],
+                        [-1, 16, 17, 4, 15, 0]]
 
 # unproccessMap = [-1,    [-1, 7, 8, 22, 4, 5, 27],
 #                         [-1, 19, 17, 18, 10, 1, 12],
@@ -14,6 +20,15 @@ unproccessMap = [-1,    [-1, 14, 7, 3, 6],
 #                         [-1, 31, 24, 3, 23, 15, 21],
 #                         [-1, 25, 14, 34, 28, 29, 16],
 #                         [-1, 2, 32, 9, 35, 11, 0]]
+
+# unproccessMap = [-1,    [-1, 20, 63, 12, 4, 11, 6, 52, 32],       # RecursionError: maximum recursion depth exceeded
+#                         [-1, 9, 38, 13, 3, 56, 62, 49, 16],
+#                         [-1, 15, 18, 23, 44, 26, 36, 19, 31],
+#                         [-1, 29, 17, 27, 28, 25, 30, 43, 51],
+#                         [-1, 33, 14, 35, 7, 37, 45, 39, 40],
+#                         [-1, 41, 42, 24, 57, 8, 46, 47, 48],
+#                         [-1, 55, 34, 5, 22, 53, 50, 54, 10],
+#                         [-1, 21, 58, 59, 60, 61, 1, 2, 0]]
 
 x_max, y_max = len(unproccessMap) - 1, len(unproccessMap[1]) - 1
 
@@ -49,44 +64,45 @@ def edge_judgement(xi, yi, xf, yf, x, y):
     else:
         return False
 
-def dire_sel(mPoint, xtarPoint, ytarPoint):
+def dire_sel(curPoint, xtarPoint, ytarPoint):
 
-    if(xtarPoint < mPoint.x and ytarPoint < mPoint.y):
-        return [dire[1], dire[3], [0, 0], dire[4]]
-    if(xtarPoint > mPoint.x and ytarPoint > mPoint.y):
-        return [dire[2], dire[4], [0, 0], dire[3]]
-    if(xtarPoint > mPoint.x and ytarPoint < mPoint.y):
-        return [dire[2], dire[3], [0, 0], dire[4]]
-    if(xtarPoint < mPoint.x and ytarPoint > mPoint.y):
-        return [dire[1], dire[4], [0, 0], dire[3]]
+    if(xtarPoint < curPoint.x and ytarPoint < curPoint.y):
+        return [dire[1], dire[3], dire[2], dire[4]]
+    if(xtarPoint > curPoint.x and ytarPoint > curPoint.y):
+        return [dire[2], dire[4], dire[1], dire[3]]
+    if(xtarPoint > curPoint.x and ytarPoint < curPoint.y):
+        return [dire[2], dire[3], dire[1], dire[4]]
+    if(xtarPoint < curPoint.x and ytarPoint > curPoint.y):
+        return [dire[1], dire[4], dire[2], dire[3]]
 
-    if(xtarPoint == mPoint.x and ytarPoint < mPoint.y):
-        return [dire[1], dire[2], dire[3], dire[4]]
-    if(xtarPoint == mPoint.x and ytarPoint > mPoint.y):
-        return [dire[1], dire[2], dire[4], dire[3]]
-    if(xtarPoint > mPoint.x and ytarPoint == mPoint.y):
-        return [dire[3], dire[4], dire[2], dire[1]]
-    if(xtarPoint < mPoint.x and ytarPoint == mPoint.y):
-        return [dire[3], dire[4], dire[1], dire[2]]
+    if(xtarPoint == curPoint.x and ytarPoint < curPoint.y):
+        return [dire[3], dire[1], dire[2], dire[4]]
+    if(xtarPoint == curPoint.x and ytarPoint > curPoint.y):
+        return [dire[4], dire[1], dire[2], dire[3]]
+    if(xtarPoint > curPoint.x and ytarPoint == curPoint.y):
+        return [dire[2], dire[3], dire[4], dire[1]]
+    if(xtarPoint < curPoint.x and ytarPoint == curPoint.y):
+        return [dire[1], dire[3], dire[4], dire[2]]
 
-def swap(mPoint1, mPoint2):
-    x1, y1 = mapLoc[mPoint1.num][0], mapLoc[mPoint1.num][1]
-    x2, y2 = mapLoc[mPoint2.num][0], mapLoc[mPoint2.num][1]
+def swap(curPoint1, curPoint2):
+    x1, y1 = mapLoc[curPoint1.num][0], mapLoc[curPoint1.num][1]
+    x2, y2 = mapLoc[curPoint2.num][0], mapLoc[curPoint2.num][1]
 
     map[x1][y1].x, map[x1][y1].y = x2, y2
     map[x2][y2].x, map[x2][y2].y = x1, y1
     map[x1][y1], map[x2][y2] = map[x2][y2], map[x1][y1]
-    mapLoc[mPoint1.num], mapLoc[mPoint2.num] = mapLoc[mPoint2.num], mapLoc[mPoint1.num]
+    mapLoc[curPoint1.num], mapLoc[curPoint2.num] = mapLoc[curPoint2.num], mapLoc[curPoint1.num]
     print_test()
     a = 0
 
-def movement_2p(xi, yi, xf, yf, mPoint1, mPoint2, xtarPoint, ytarPoint):
+def movement_2p(xi, yi, xf, yf, curPoint1, curPoint2, xtarPoint, ytarPoint):
     
     dis = 1
-    xt, yt = mPoint1.x, mPoint1.y
+    xt, yt = curPoint1.x, curPoint1.y
     count = 2
-    fixList[mPoint1.num], fixList[mPoint2.num] = True, True
-    while(mPoint1.x != xtarPoint or mPoint1.y != ytarPoint):
+    fixList[curPoint1.num] = True
+    fixList[curPoint2.num] = True
+    while(curPoint1.x != xtarPoint or curPoint1.y != ytarPoint):
         if(xf - xi + 1 > 2):
             if(count == 2):
                 xt -= 1
@@ -102,118 +118,133 @@ def movement_2p(xi, yi, xf, yf, mPoint1, mPoint2, xtarPoint, ytarPoint):
                 xt -= 1
                 count -= 1
 
-        x, y = mPoint1.x, mPoint1.y
-        dis = movement(xi, yi, xf, yf, mPoint1, xt, yt)
+        x, y = curPoint1.x, curPoint1.y
+        dis = movement(xi, yi, xf, yf, curPoint1, xt, yt)
         tempPoint = map[x][y]
-        movement(xi, yi, xf, yf, mPoint2, tempPoint.x, tempPoint.y)
+        movement(xi, yi, xf, yf, curPoint2, tempPoint.x, tempPoint.y)
+        fixList[curPoint1.num] = True
+        fixList[curPoint2.num] = True
 
     return 0
 
-def movement(xi, yi, xf, yf, mPoint, xtarPoint, ytarPoint):
+def movement(xi, yi, xf, yf, curPoint, xtarPoint, ytarPoint):
     
     # print_test()
-    if(xtarPoint == mPoint.x and ytarPoint == mPoint.y):
+    if(xtarPoint == curPoint.x and ytarPoint == curPoint.y):
         return 0
 
-    d = dire_sel(mPoint, xtarPoint, ytarPoint)
-    fixList[mPoint.num] = True
+    d = dire_sel(curPoint, xtarPoint, ytarPoint)
+    fixList[curPoint.num] = True
 
-    if(mPoint.x + d[2][0] == mapLoc[0][0] and mPoint.y + d[2][1] == mapLoc[0][1]):
-        fixList[mPoint.num] = False
-        swap(map[mPoint.x][mPoint.y], map[mapLoc[0][0]][mapLoc[0][1]])
+    if(curPoint.x + d[0][0] == mapLoc[0][0] and curPoint.y + d[0][1] == mapLoc[0][1]):
+        fixList[curPoint.num] = False
+        swap(map[curPoint.x][curPoint.y], map[mapLoc[0][0]][mapLoc[0][1]])
         return 0
 
-    max_num = 0
-    t_dire = -1
+    dire_stack = []
+    num = 0
     for i in range(0, 3):
-        if(not(xi <= mPoint.x + d[i][0] <= xf and yi <= mPoint.y + d[i][1] <= yf)):
+        if(not(xi <= curPoint.x + d[i][0] <= xf and yi <= curPoint.y + d[i][1] <= yf)):
             continue
-        if(fixList[map[mPoint.x + d[i][0]][mPoint.y + d[i][1]].num]):
+        if(fixList[map[curPoint.x + d[i][0]][curPoint.y + d[i][1]].num]):
             continue
-        if(mPoint.x + d[i][0] == xtarPoint and mPoint.y + d[i][1] == ytarPoint):
-            max_num = map[mPoint.x + d[i][0]][mPoint.y + d[i][1]].num
+        if(curPoint.x + d[i][0] == xtarPoint and curPoint.y + d[i][1] == ytarPoint):
+            num = map[curPoint.x + d[i][0]][curPoint.y + d[i][1]].num
             break
-        max_num = max(max_num, map[mPoint.x + d[i][0]][mPoint.y + d[i][1]].num)
 
-    if(max_num == 0):
-        if(not(xi <= mPoint.x + d[3][0] <= xf and yi <= mPoint.y + d[3][1] <= yf)):
-            pass
-        elif(fixList[map[mPoint.x + d[3][0]][mPoint.y + d[3][1]].num]):
-            pass
-        else:
-            max_num = max(max_num, map[mPoint.x + d[3][0]][mPoint.y + d[3][1]].num)
-        if(max_num == 0):
-            return -1
-    nextPoint = map[mapLoc[max_num][0]][mapLoc[max_num][1]]
+        dire_stack.append(map[curPoint.x + d[i][0]][curPoint.y + d[i][1]].num)
 
-    xtarPoint = mapLoc[0][0]
-    ytarPoint = mapLoc[0][1]
-
-    if(xf - xi + 1 <= 2 and yf - yi + 1 <= 2 and mPoint.num == xi * yf and nextPoint.x == xi and nextPoint.y == yf):
+    if(num != 0):
+        dire_stack = [map[mapLoc[num][0]][mapLoc[num][1]].num] + dire_stack
+    if(xi <= curPoint.x + d[3][0] <= xf and yi <= curPoint.y + d[3][1] <= yf 
+        and not fixList[map[curPoint.x + d[3][0]][curPoint.y + d[3][1]].num]):
+        dire_stack.append(map[curPoint.x + d[3][0]][curPoint.y + d[3][1]].num)
+    if(len(dire_stack) == 0):
+        fixList[curPoint.num] = False
         return -1
-        
 
-    if(xf - xi + 1 > 2):
-        if(nextPoint.x == xi and nextPoint.y == yf and mPoint.num == (nextPoint.x - 1) * yf + nextPoint.y 
-            and fixList[map[nextPoint.x][nextPoint.y - 1].num] == False):
-            dis = 1
-            while(dis):
-                dis = movement(xi, yf - 1, xi + 2, yf, mPoint, xi + 2, yf)
+    for i in range(len(dire_stack)):
+
+        nextPoint = map[mapLoc[dire_stack[i]][0]][mapLoc[dire_stack[i]][1]]
+
+        xtarPoint = mapLoc[0][0]
+        ytarPoint = mapLoc[0][1]
+
+        # if(xf - xi + 1 <= 2 and yf - yi + 1 <= 2 and curPoint.num == xi * yf and nextPoint.x == xi and nextPoint.y == yf):
+        #     continue
+            
+        if(xf - xi + 1 > 2):
+            if(nextPoint.x == xi and nextPoint.y == yf and curPoint.num == (nextPoint.x - 1) * y_max + nextPoint.y 
+                and fixList[map[nextPoint.x][nextPoint.y - 1].num] == True):
+                dis = 1
+                while(dis):
+                    dis = movement(xi, yf - 1, xi + 2, yf, curPoint, xi + 2, yf)
+                    if(dis == -1):
+                        return -1
+                fixList[curPoint.num] = True
+
+                dis = 1
+                tempPoint = map[xi][yf - 1]
+                while(dis):
+                    dis = movement(xi, yf - 1, xi + 2, yf, tempPoint, xi + 1, yf)
+                    if(dis == -1):
+                        return -1
+                fixList[tempPoint.num] = True      
+
+                movement_2p(xi, yf - 1, xi + 2, yf, tempPoint, curPoint, xi, yf - 1)
+
+                return 0
+            else:
+                dis = 1
+                dis = movement(xi, yi, xf, yf, nextPoint, xtarPoint, ytarPoint)              
                 if(dis == -1):
-                    return -1
-            fixList[mPoint.num] = True
-
-            dis = 1
-            tempPoint = map[xi][yf - 1]
-            while(dis):
-                dis = movement(xi, yf - 1, xi + 2, yf, tempPoint, xi + 1, yf)
-                if(dis == -1):
-                    return -1
-            fixList[tempPoint.num] = True      
-
-            movement_2p(xi, yf - 1, xi + 2, yf, tempPoint, mPoint, xi, yf - 1)
-
-            fixList[tempPoint.num] = False
-
-            return 0
+                    fixList[nextPoint.num] = False
+                    continue
+                fixList[curPoint.num] = False
+                nextPoint = map[mapLoc[0][0]][mapLoc[0][1]]
+                swap(curPoint, nextPoint)
+                return 1
         else:
-            movement(xi, yi, xf, yf, nextPoint, xtarPoint, ytarPoint)
-            fixList[mPoint.num] = False
-            nextPoint = map[mapLoc[0][0]][mapLoc[0][1]]
-            swap(mPoint, nextPoint)
-            return 1
-    else:
-        if(nextPoint.x == xf and nextPoint.y == yi and mPoint.num == (nextPoint.x - 1) * y_max + nextPoint.y):
-            dis = 1
-            while(dis):
-                dis = movement(xi, yi, xi + 1, yi + 2, mPoint, xf, yf)
+            if(nextPoint.x == xf and nextPoint.y == yi and curPoint.num == (nextPoint.x - 1) * y_max + nextPoint.y):
+                dis = 1
+                t_xf = xi + 1
+                t_yf = yi + 2
+                while(dis):
+                    dis = movement(xi, yi, xi + 1, yi + 2, curPoint, xf, yi + 2)
+                    if(dis == -1):
+                        return -1
+                fixList[curPoint.num] = True
+
+                dis = 1
+                tempPoint = map[xi][yi]
+                while(dis):
+                    fixList[curPoint.num] = True
+                    dis = movement(xi, yi, xi + 1, yi + 2, tempPoint, xf, yi + 1)
+                    if(dis == -1):
+                        return -1   
+                fixList[tempPoint.num] = True
+
+                movement_2p(xi, yi, xi + 1, yi + 2, tempPoint, curPoint, xi, yi)
+
+                return 0
+            else:
+                dis = 1
+                dis = movement(xi, yi, xf, yf, nextPoint, xtarPoint, ytarPoint)
                 if(dis == -1):
-                    return -1
-            fixList[mPoint.num] = True
+                    fixList[nextPoint.num] = False
+                    continue
+                fixList[curPoint.num] = False
+                nextPoint = map[mapLoc[0][0]][mapLoc[0][1]]
+                swap(curPoint, nextPoint)
+                return 1
 
-            dis = 1
-            tempPoint = map[xi][yi]
-            while(dis):
-                dis = movement(xi, yi, xi + 1, yi + 2, tempPoint, xf, yf - 1)
-                if(dis == -1):
-                    return -1    
-            fixList[tempPoint.num] = True
-
-            movement_2p(xi, yi, xi + 1, yi + 2, tempPoint, mPoint, xi, yi)
-
-            fixList[tempPoint.num] = False
-
-            return 0
-        else:
-            movement(xi, yi, xf, yf, nextPoint, xtarPoint, ytarPoint)
-            fixList[mPoint.num] = False
-            nextPoint = map[mapLoc[0][0]][mapLoc[0][1]]
-            swap(mPoint, nextPoint)
-            return 1
+    return -1
 
 
 def map_solve(x, y):
        
+    print_test()
+
     for num in range(1, (x - 1)* y + 1):
 
         # print_test()
@@ -225,7 +256,7 @@ def map_solve(x, y):
                                 map[mapLoc[num][0]][mapLoc[num][1]], 
                                 (num - 1) // y + 1, (num - 1) % y + 1)
                 if(dis == -1):
-                    break
+                    return -1
             fixList[num] = True
             continue
 
@@ -252,7 +283,7 @@ def map_solve(x, y):
                                     map[mapLoc[0][0]][mapLoc[0][1]], 
                                     x_max, y_max)
                 if(dis == -1):
-                    break
+                    return -1
             
             fixList[num] = True
             continue
@@ -261,9 +292,7 @@ def map_solve(x, y):
         return 0
     else:
         return -1
-        
-        
-    return dis
+
             
 
 def check_res():
