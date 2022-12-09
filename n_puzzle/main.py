@@ -67,7 +67,7 @@ def map_init(x, y, oriMap):
             mapLoc[oriMap[i][j]] = [i, j]
         map.append(temp)
 
-    PROCEDURE_STORAGE.append(map)
+    PROCEDURE_STORAGE.append(pickle.loads(pickle.dumps(map)))
 
 def edge_judgement(xi, yi, xf, yf, x, y):
     if(xi <= x <= xf and yi <= y <= yf):
