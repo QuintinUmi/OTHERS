@@ -1,6 +1,7 @@
 import pdb
 import time
 import pickle
+import map_generator as mg
 
 time_start=time.time()
 
@@ -39,7 +40,7 @@ unproccessMap = [-1,    [-1, 20, 63, 12, 4, 11, 6, 52, 32],
                         [-1, 55, 34, 5, 22, 53, 50, 54, 10],
                         [-1, 21, 58, 59, 60, 61, 1, 2, 0]]
 
-x_max, y_max = len(unproccessMap) - 1, len(unproccessMap[1]) - 1
+x_max, y_max = 16, 16
 
 dire = [-1, [-1, 0],
             [1, 0],
@@ -376,7 +377,7 @@ def print_test():
     for i in range(1, x_max + 1):
         for j in range(1, y_max + 1):
             # print(map[i][j].num, (map[i][j].x, map[i][j].y), end=' ')
-            print(map[i][j].num, end=' ')
+            print("{:^6d}".format(map[i][j].num), end=' ')
         print()
 
 def print_map(p_map):
@@ -385,7 +386,7 @@ def print_map(p_map):
     for i in range(1, x_max + 1):
         for j in range(1, y_max + 1):
             # print(map[i][j].num, (map[i][j].x, map[i][j].y), end=' ')
-            print(p_map[i][j].num, end=' ')
+            print("{:^6d}".format(p_map[i][j].num), end=' ')
         print()
 
 def write_res(f, w_map):
@@ -394,13 +395,15 @@ def write_res(f, w_map):
     for i in range(1, x_max + 1):
         for j in range(1, y_max + 1):
             # print(map[i][j].num, (map[i][j].x, map[i][j].y), end=' ')
-            f.write("{} ".format(w_map[i][j].num))
+            print("{:^6d}".format(w_map[i][j].num), file=f)
         f.write("\n")
     
     
 
 def main():
-
+    
+    global x_max, y_max
+    unproccessMap = mg.map_generate(x_max, y_max)
     x_max, y_max = len(unproccessMap) - 1, len(unproccessMap[1]) - 1
     map_init(x_max, y_max, unproccessMap)
     res = map_solve(x_max, y_max)
@@ -417,8 +420,11 @@ def main():
 
     input("Press ENTER to show and write the procedure of the solution in a file where the upper level of this source code is  ")
 
-    for w_map in PROCEDURE_STORAGE:
-        print_map(w_map)
+    ip = input("Display? (Y/N): ")
+
+    if(ip.upper() == 'Y'):
+        for w_map in PROCEDURE_STORAGE:
+            print_map(w_map)
 
     input("\nPress ENTER to write in file... (Note: The program may not create the file if no Administrator Permissions) ")
     f = open(".\\result.txt", 'w')
